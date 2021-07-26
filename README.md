@@ -2,13 +2,17 @@
 
 Contains Single Message Transformations (SMTs) for Kafka Connect
 
-## [MapHeader SMT](src/main/java/io/github/nejckorasa/kafka/connect/smt/transforms/MapHeader.java) 
+## Usage
+
+Head to [packages](https://github.com/nejckorasa/kafka-connect-smt/packages) to view released packages.
+
+### [MapHeader SMT](src/main/java/io/github/nejckorasa/kafka/connect/smt/transforms/MapHeader.java) 
 
 Splits a composite header in kafka record into separate headers. 
 
 Composite Header must be a map and stored in json format, every map entry will add a new header with key as header name and value as header value.
 
-### Composite header example
+#### Composite header example
 ```json
 {
   "header1": "value1",
@@ -16,7 +20,7 @@ Composite Header must be a map and stored in json format, every map entry will a
 }
 ```
 
-### Configuration example
+#### Configuration example
 
 ```properties
 # transforms pipeline 
@@ -30,11 +34,11 @@ transforms.mapHeaders.header.name=headers_json_map
 transforms.outbox.table.fields.additional.placement=headers_json_map:header
 ```
 
-## [FilterOnMatchingHeader SMT](src/main/java/io/github/nejckorasa/kafka/connect/smt/transforms/FilterOnMatchingHeader.java) 
+### [FilterOnMatchingHeader SMT](src/main/java/io/github/nejckorasa/kafka/connect/smt/transforms/FilterOnMatchingHeader.java) 
 
 Includes or drops records with at least one header with the configured name that matches the configured value. 
 
-### Configuration example
+#### Configuration example
 
 ```properties
 # transforms pipeline 
@@ -48,13 +52,3 @@ predicates.filterOnHeader.value=someHeaderValue
 ```
 
 The above configuration will **exclude** records that have a header with name `someHeaderName` and value `someHeaderValue`.
-
-
-## Contributing & Releasing
-When you add a tag to this repo a publish will be triggered in concourse. Remember to add annotated (`-a`) tags and 
-to always tag the master branch:
-
-```bash
-git tag -a 1.0.6 -m "Release version 1.0.6"
-git push --tags
-```
