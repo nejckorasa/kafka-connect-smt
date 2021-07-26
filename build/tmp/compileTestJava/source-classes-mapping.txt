@@ -1,6 +1,0 @@
-io/github/nejckorasa/kafka/connect/smt/transforms/TestRecordFactory.java
- io.github.nejckorasa.kafka.connect.smt.transforms.TestRecordFactory
-io/github/nejckorasa/kafka/connect/smt/transforms/MapHeaderTest.java
- io.github.nejckorasa.kafka.connect.smt.transforms.MapHeaderTest
-io/github/nejckorasa/kafka/connect/smt/transforms/FilterOnMatchingHeaderTest.java
- io.github.nejckorasa.kafka.connect.smt.transforms.FilterOnMatchingHeaderTest
