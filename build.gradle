@@ -1,0 +1,102 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'groovy'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'io.wusa.semver-git-plugin' version '2.2.1'
+}
+
+semver {
+    initialVersion = "1.0.0" // (default) initial version in semantic versioning
+    tagPrefix = "" // (default) each project can have its own tags identified by a unique prefix
+    branches { // list of branch configurations
+        branch {
+            regex = ".+"
+            incrementer = "PATCH_INCREMENTER"
+            formatter = { "${semver.info.version.major}.${semver.info.version.minor}.${semver.info.version.patch}" }
+        }
+    }
+}
+
+version = semver.info.toString()
+group "io.github.nejckorasa"
+println "\nBuilding version $version of ssv-debezium-plugin"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        credentials {
+            username = maven_user
+            password = maven_password
+        }
+        url = eevee_maven_url
+    }
+    maven { url "https://packages.confluent.io/maven/" }
+}
+
+task sourceJar(type: Jar) {
+    archiveClassifier = "sources"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/nejckorasa/kafka-connect-smt"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation "io.confluent:kafka-avro-serializer:${confluentRegistryVersion}"
+    implementation "io.confluent:kafka-streams-avro-serde:${confluentRegistryVersion}"
+    implementation "org.apache.kafka:connect-api:${kafkaConnectVersion}"
+    implementation "org.apache.kafka:connect-transforms:${kafkaConnectVersion}"
+
+    implementation "ch.qos.logback:logback-core:${logbackVersion}"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
+    implementation "org.slf4j:slf4j-api:1.7.30"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("8")
+    targetCompatibility = JavaVersion.toVersion("8")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+shadowJar {
+    dependencies {
+        // provided in the connect classpath
+        exclude(dependency("io.confluent:.*:.*"))
+        exclude(dependency("org.apache.kafka:.*:.*"))
+        exclude(dependency('net.jpountz.lz4:.*:.*'))
+        exclude(dependency('org.xerial.snappy:.*:.*'))
+        exclude(dependency('org.slf4j:.*:.*'))
+    }
+
+    // for things we directly depend on, repackage so we don't conflict with other connectors
+    relocate 'com.fasterxml', 'shadow.fasterxml'
+    relocate 'org.apache.commons', 'shadow.apache.commons'
+    relocate 'org.apache.http', 'shadow.apache.http'
+
+    mergeServiceFiles()
+}
+
+tasks.build.dependsOn tasks.shadowJar
