@@ -1,6 +1,0 @@
-io/github/nejckorasa/kafka/connect/smt/transforms/FilterOnMatchingHeader.java
- io.github.nejckorasa.kafka.connect.smt.transforms.FilterOnMatchingHeader
- io.github.nejckorasa.kafka.connect.smt.transforms.FilterOnMatchingHeader$ConfigName
-io/github/nejckorasa/kafka/connect/smt/transforms/MapHeader.java
- io.github.nejckorasa.kafka.connect.smt.transforms.MapHeader
- io.github.nejckorasa.kafka.connect.smt.transforms.MapHeader$ConfigName
